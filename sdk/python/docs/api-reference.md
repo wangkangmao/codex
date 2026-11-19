@@ -339,10 +339,13 @@ Tool names and namespaces identify the source; they are not proof of its
 identity or permission to act.
 
 When a message joins an active turn, both handles can stream or collect the
-result independently. A joining handle receives previously completed items and
-the latest usage, followed by live notifications. Consumed transient events such
-as token deltas are discarded. Both handles collect the complete result, and
-closing one stream leaves the other active.
+result independently. A joining handle starts when it joins: in addition to a
+snapshot of the latest usage it receives only future notifications, not the
+items already completed before it joined. Consumed transient events such as
+token deltas are discarded. As a result, the joining handle's collected result
+has no `final_response` (it is `None`) because that item was emitted before the
+handle joined, while the original handle still collects the full result. Closing
+one stream leaves the other active.
 
 The async calls use the same object:
 
